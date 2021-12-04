@@ -71,6 +71,8 @@ def setup_game(data: List[str]) -> Tuple[List[int], List[BingoBoard]]:
     """Setup the boards and the bingo onput numbers
     Args:
         data: Input data to create a bingo game
+    Returns:
+        Numers to call out and the list of boards
     """
     numbers = list(map(int, data[0].split(sep=",")))
     boards = []
@@ -85,15 +87,27 @@ def setup_game(data: List[str]) -> Tuple[List[int], List[BingoBoard]]:
     return numbers, boards
 
 
-def play(numbers: List[int], boards: List[BingoBoard]) -> int:
-    """Play a game of bingo"""
+def play(numbers: List[int], boards: List[BingoBoard]) -> List[Tuple[int, int]]:
+    """Play a game of bingo and pick the boards that win in a list
+    Args:
+        data: Input data to create a bingo game
+    Returns:
+        List of boards and their corresponding scores
+    """
+    wins = []
+    already_won = set()
+    num_boards = len(boards)
     for num in numbers:
-        for board in boards:
+        for i, board in enumerate(boards):
             board.cross_out(num)
-            if board.check():
-                return board.score() * num
+            if board.check() and i not in already_won:
+                already_won.add(i)
+                scr = board.score() * num
+                wins.append((i, scr))
+        if len(already_won) == num_boards:
+            break
 
-    return -1
+    return wins
 
 
 def main() -> None:
@@ -102,9 +116,11 @@ def main() -> None:
     setup_logger(args.log_path)
 
     data = read_file(args.file_path)
+
     nums, boards = setup_game(data)
-    score = play(nums, boards)
-    print(score)
+    scores = play(nums, boards)
+    print(f"SCore to win: {scores[0][1]}")
+    print(f"SCore to lose: {scores[-1][1]}")
 
 
 if __name__ == "__main__":
