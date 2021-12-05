@@ -4,12 +4,13 @@
 import argparse
 import logging
 from pathlib import Path
+import re
 from typing import List, Tuple
 
 
 def arg_parser() -> argparse.Namespace:
     """Parse CLI arguments"""
-    parser = argparse.ArgumentParser(description="Bingo game simulator")
+    parser = argparse.ArgumentParser(description="Line intersection")
     parser.add_argument(
         "-f",
         "--file_path",
@@ -47,7 +48,7 @@ def setup_logger(log_path: Path) -> None:
         logger.addHandler(stream_handler)
 
 
-def read_file(file_path: Path) -> List[str]:
+def read_file(file_path: Path) -> List[List[int]]:
     """Read input file
     Args:
         file_path: Path of input file
@@ -58,11 +59,41 @@ def read_file(file_path: Path) -> List[str]:
     try:
         with file_path.open("r") as fptr:
             for line in fptr:
-                lines.append(line.strip())
+                match = re.search(r"(\d*),(\d*) -> (\d*),(\d*)$", line.strip())
+                lines.append( [int(match.group(i)) for i in range(1, 5)] )
     except FileNotFoundError:
         logging.error("File '%s' not found!", file_path)
 
     return lines
+
+
+def count_horiz_vert_overlap(data: List[List[int]]) -> int:
+    """Count the number of overlaps of the horizontal and vertical lines
+    Args:
+        data: Input data
+    Returns:
+        Count of overlap
+    """
+    if not data:
+        logging.error("Input data is empty!")
+        return -1
+
+    graph = dict()
+    for pts in data:
+        if pts[0] == pts[2]:
+            ymin = min(pts[1], pts[3])
+            ymax = max(pts[1], pts[3])
+            for y in range(ymin, ymax + 1):
+                val = graph.get((pts[0], y), 0) 
+                graph[(pts[0], y)] = val + 1
+        elif pts[1] == pts[3]:
+            xmin = min(pts[0], pts[2])
+            xmax = max(pts[0], pts[2])
+            for x in range(xmin, xmax + 1):
+                val = graph.get((x, pts[1]), 0) 
+                graph[(x, pts[1])] = val + 1
+
+    return sum([1 for val in graph.values() if val > 1])
 
 
 def main() -> None:
@@ -71,6 +102,8 @@ def main() -> None:
     setup_logger(args.log_path)
 
     data = read_file(args.file_path)
+    ans = count_horiz_vert_overlap(data)
+    print(ans)
 
 
 if __name__ == "__main__":
