@@ -3,9 +3,9 @@
 
 import argparse
 import logging
-from pathlib import Path
 import re
-from typing import List, Tuple
+from pathlib import Path
+from typing import Dict, List, Tuple
 
 
 def arg_parser() -> argparse.Namespace:
@@ -60,7 +60,8 @@ def read_file(file_path: Path) -> List[List[int]]:
         with file_path.open("r") as fptr:
             for line in fptr:
                 match = re.search(r"(\d*),(\d*) -> (\d*),(\d*)$", line.strip())
-                lines.append( [int(match.group(i)) for i in range(1, 5)] )
+                if match:
+                    lines.append([int(match.group(i)) for i in range(1, 5)])
     except FileNotFoundError:
         logging.error("File '%s' not found!", file_path)
 
@@ -78,20 +79,20 @@ def count_horiz_vert_overlap(data: List[List[int]]) -> int:
         logging.error("Input data is empty!")
         return -1
 
-    graph = dict()
+    graph: Dict[Tuple[int, int], int] = {}
     for pts in data:
         if pts[0] == pts[2]:
             ymin = min(pts[1], pts[3])
             ymax = max(pts[1], pts[3])
-            for y in range(ymin, ymax + 1):
-                val = graph.get((pts[0], y), 0) 
-                graph[(pts[0], y)] = val + 1
+            for j in range(ymin, ymax + 1):
+                val = graph.get((pts[0], j), 0)
+                graph[(pts[0], j)] = val + 1
         elif pts[1] == pts[3]:
             xmin = min(pts[0], pts[2])
             xmax = max(pts[0], pts[2])
-            for x in range(xmin, xmax + 1):
-                val = graph.get((x, pts[1]), 0) 
-                graph[(x, pts[1])] = val + 1
+            for i in range(xmin, xmax + 1):
+                val = graph.get((i, pts[1]), 0)
+                graph[(i, pts[1])] = val + 1
 
     return sum([1 for val in graph.values() if val > 1])
 
