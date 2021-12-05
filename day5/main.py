@@ -97,6 +97,47 @@ def count_horiz_vert_overlap(data: List[List[int]]) -> int:
     return sum([1 for val in graph.values() if val > 1])
 
 
+def count_all_overlap(data: List[List[int]]) -> int:
+    """Count all the overlaps
+    Args:
+        data:Input data
+    Returns:
+        Count of all the overlaps
+    """
+    if not data:
+        logging.error("Input data is empty!")
+        return -1
+
+    graph: Dict[Tuple[int, int], int] = {}
+    for pts in data:
+        if pts[0] == pts[2]:
+            ymin = min(pts[1], pts[3])
+            ymax = max(pts[1], pts[3])
+            for i in range(ymin, ymax + 1):
+                val = graph.get((pts[0], i), 0)
+                graph[(pts[0], i)] = val + 1
+        elif pts[1] == pts[3]:
+            xmin = min(pts[0], pts[2])
+            xmax = max(pts[0], pts[2])
+            for i in range(xmin, xmax + 1):
+                val = graph.get((i, pts[1]), 0)
+                graph[(i, pts[1])] = val + 1
+        elif ((pts[0] - pts[2]) * (pts[1] - pts[3])) > 0:
+            xmin = min(pts[0], pts[2])
+            ymin = min(pts[1], pts[3])
+            for i in range(abs(pts[0] - pts[2]) + 1):
+                val = graph.get((xmin + i, ymin + i), 0)
+                graph[(xmin + i, ymin + i)] = val + 1
+        else:
+            xmin = min(pts[0], pts[2])
+            ymax = max(pts[1], pts[3])
+            for i in range(abs(pts[0] - pts[2]) + 1):
+                val = graph.get((xmin + i, ymax - i), 0)
+                graph[(xmin + i, ymax - i)] = val + 1
+
+    return sum([1 for val in graph.values() if val > 1])
+
+
 def main() -> None:
     """Main function"""
     args = arg_parser()
@@ -105,6 +146,8 @@ def main() -> None:
     data = read_file(args.file_path)
     ans = count_horiz_vert_overlap(data)
     print(ans)
+    ans2 = count_all_overlap(data)
+    print(ans2)
 
 
 if __name__ == "__main__":
