@@ -74,8 +74,8 @@ def count_lanternfishes_naive(days: int, data: List[int]) -> int:
     """
     for _ in range(days):
         num_zeros = data.count(0)
-        data += [9] * num_zeros
         data = [val - 1 if val > 0 else 6 for val in data]
+        data += [8] * num_zeros
 
     return len(data)
 
@@ -90,15 +90,18 @@ def count_lanternfishes_fast(days: int, data: List[int]) -> int:
     """
     ctr: Dict[int, int] = {}
     for day in data:
-        counts = ctr.get(day, 0)
-        ctr[day] = counts + 1
+        count = ctr.get(day, 0)
+        ctr[day] = count + 1
 
     for _ in range(days):
         num_zeros = ctr.get(0, 0)
-        day9_count = ctr.get(9, 0)
-        if num_zeros:
-            ctr[9] = day9_count + num_zeros
+
         ctr = {(day - 1): count for day, count in ctr.items()}
+
+        day8_count = ctr.get(8, 0)
+        if num_zeros:
+            ctr[8] = day8_count + num_zeros
+
         neg_counts = ctr.get(-1, 0)
         day6_counts = ctr.get(6, 0)
         if neg_counts:
