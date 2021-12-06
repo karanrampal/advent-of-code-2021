@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Line intersection"""
+"""Lantern fish counting"""
 
 import argparse
 import logging
