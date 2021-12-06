@@ -23,3 +23,4 @@ conda create --name <virtual env name> python=3.8
 conda activate <name of virtual environment>
 conda install --file requirements.txt
 ```
+or just do `make install` from the parent directory.

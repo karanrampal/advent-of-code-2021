@@ -3,5 +3,3 @@ black
 pylint
 mypy
 isort
-pytest
-pytest-cov
