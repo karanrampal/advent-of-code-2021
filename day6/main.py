@@ -4,7 +4,7 @@
 import argparse
 import logging
 from pathlib import Path
-from typing import List
+from typing import Dict, List
 
 
 def arg_parser() -> argparse.Namespace:
@@ -64,7 +64,7 @@ def read_file(file_path: Path) -> List[int]:
     return lines
 
 
-def count_lanternfishes(days: int, data: List[int]) -> int:
+def count_lanternfishes_naive(days: int, data: List[int]) -> int:
     """Count the number of lanternfishes after given number of days
     Args:
         days: Number of days to simulate
@@ -80,6 +80,34 @@ def count_lanternfishes(days: int, data: List[int]) -> int:
     return len(data)
 
 
+def count_lanternfishes_fast(days: int, data: List[int]) -> int:
+    """Count the number of lanternfishes after given number of days
+    Args:
+        days: Number of days to simulate
+        data: Input data
+    Returns:
+        Count of the number of lanter fishes
+    """
+    ctr: Dict[int, int] = {}
+    for day in data:
+        counts = ctr.get(day, 0)
+        ctr[day] = counts + 1
+
+    for _ in range(days):
+        num_zeros = ctr.get(0, 0)
+        day9_count = ctr.get(9, 0)
+        if num_zeros:
+            ctr[9] = day9_count + num_zeros
+        ctr = {(day - 1): count for day, count in ctr.items()}
+        neg_counts = ctr.get(-1, 0)
+        day6_counts = ctr.get(6, 0)
+        if neg_counts:
+            ctr[6] = day6_counts + neg_counts
+        ctr.pop(-1, None)
+
+    return sum(ctr.values())
+
+
 def main() -> None:
     """Main function"""
     args = arg_parser()
@@ -87,8 +115,10 @@ def main() -> None:
 
     data = read_file(args.file_path)
 
-    ans = count_lanternfishes(80, data)
-    print(f"Number of lanternfishes: {ans}")
+    ans = count_lanternfishes_naive(80, data)
+    print(f"Number of lantern fishes: {ans}")
+    ans2 = count_lanternfishes_fast(256, data)
+    print(f"Number of lantern fishes: {ans2}")
 
 
 if __name__ == "__main__":
