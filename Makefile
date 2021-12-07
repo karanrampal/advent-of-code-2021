@@ -1,9 +1,10 @@
 VENV := ./.venv
 
 install: requirements.txt
-	python3 -m venv  $(VENV)
-	$(VENV)/bin/pip install --upgrade pip
-	$(VENV)/bin/pip install -r requirements/requirements.txt
+	python -m venv $(VENV)
+	source $(VENV)/Scripts/activate
+	$(VENV)/Scripts/pip install --upgrade pip
+	$(VENV)/Scripts/pip install -r requirements.txt
 
 lint:
 	pylint --disable=R -j 6 ./day*/*.py
