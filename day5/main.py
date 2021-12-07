@@ -145,9 +145,11 @@ def main() -> None:
 
     data = read_file(args.file_path)
     ans = count_horiz_vert_overlap(data)
-    print(ans)
+    assert ans == 5608
+    print(f"Horizontal and vertical overlaps: {ans}")
     ans2 = count_all_overlap(data)
-    print(ans2)
+    assert ans2 == 20299
+    print(f"All overlap: {ans2}")
 
 
 if __name__ == "__main__":

@@ -118,8 +118,12 @@ def main() -> None:
 
     logging.info("Starting ...")
     lines = read_file(args.file_path)
-    print(f"Submarine position: {submarine_position(lines)}")
-    print(f"New submarine position: {submarine_position_new(lines)}")
+    ans = submarine_position(lines)
+    assert ans == 1694130
+    print(f"Submarine position: {ans}")
+    ans2 = submarine_position_new(lines)
+    assert ans2 == 1698850445
+    print(f"New submarine position: {ans2}")
     logging.info("Finished ...")
 
 

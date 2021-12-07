@@ -124,6 +124,7 @@ def main() -> None:
     setup_logger(args.log_path)
 
     answer1 = get_num_increments(args.file_path)
+    assert answer1 == 1711
     print(f"Num increments of window size 1: {answer1}")
 
     lines = read_file(args.file_path)
@@ -131,6 +132,7 @@ def main() -> None:
     ans1 = get_num_windowed_increments(lines_int, 1)
     assert ans1 == answer1, f"{ans1} not equal to {answer1}"
     answer2 = get_num_windowed_increments(lines_int)
+    assert answer2 == 1743
     print(f"Num increments of window size 3: {answer2}")
 
 

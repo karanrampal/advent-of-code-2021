@@ -119,6 +119,8 @@ def main() -> None:
 
     nums, boards = setup_game(data)
     scores = play(nums, boards)
+    assert scores[0][1] == 28082
+    assert scores[-1][1] == 8224
     print(f"SCore to win: {scores[0][1]}")
     print(f"SCore to lose: {scores[-1][1]}")
 

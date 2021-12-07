@@ -108,7 +108,9 @@ def main() -> None:
 
     ans = min_horizontal_change(data)
     print(f"Min fuel: {ans}")
+    assert ans == 336120
     ans2 = min_horizontal_change_2(data)
+    assert ans2 == 96864235
     print(f"Min fuel: {ans2}")
 
 

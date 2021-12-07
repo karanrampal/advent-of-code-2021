@@ -161,9 +161,11 @@ def main() -> None:
     data = read_file(args.file_path)
 
     res1 = binary_diagnostic(data)
+    assert res1 == 3901196
     print(f"Binary Diagnostic value: {res1}")
 
     res2 = life_support_rating(data)
+    assert res2 == 4412188
     print(f"Life support rating: {res2}")
 
 

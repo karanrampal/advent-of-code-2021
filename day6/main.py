@@ -119,8 +119,10 @@ def main() -> None:
     data = read_file(args.file_path)
 
     ans = count_lanternfishes_naive(80, data)
+    assert ans == 391671
     print(f"Number of lantern fishes: {ans}")
     ans2 = count_lanternfishes_fast(256, data)
+    assert ans2 == 1754000560399
     print(f"Number of lantern fishes: {ans2}")
 
 
