@@ -4,6 +4,7 @@
 import argparse
 import logging
 import statistics
+import sys
 from pathlib import Path
 from typing import List
 
@@ -76,6 +77,28 @@ def min_horizontal_change(data: List[int]) -> int:
     return int(sum([abs(i - med) for i in data]))
 
 
+def min_horizontal_change_2(data: List[int]) -> int:
+    """Caculate the minimum change to align horizontal positions given that the
+    crabs move in arithmetic progression.
+    Args:
+        data: Inpu data
+    Returns
+        Sum of the distances to min point
+    """
+    min_fuel = sys.maxsize
+    min_val = min(data)
+    max_val = max(data)
+    for j in range(min_val, max_val):
+        sum_ = 0
+        for i in data:
+            dist = abs(i - j)
+            sum_ += dist * (dist + 1) // 2
+        if sum_ < min_fuel:
+            min_fuel = sum_
+
+    return min_fuel
+
+
 def main() -> None:
     """Main function"""
     args = arg_parser()
@@ -85,8 +108,8 @@ def main() -> None:
 
     ans = min_horizontal_change(data)
     print(f"Min fuel: {ans}")
-    # avg = statistics.mean(data)
-    # print(sum([(abs(i-avg))*(abs(i-avg) +1)//2 for i in data]))
+    ans2 = min_horizontal_change_2(data)
+    print(f"Min fuel: {ans2}")
 
 
 if __name__ == "__main__":
