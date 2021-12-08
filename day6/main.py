@@ -9,7 +9,7 @@ from typing import Dict, List
 
 def arg_parser() -> argparse.Namespace:
     """Parse CLI arguments"""
-    parser = argparse.ArgumentParser(description="Line intersection")
+    parser = argparse.ArgumentParser(description="Lantern fish counting")
     parser.add_argument(
         "-f",
         "--file_path",

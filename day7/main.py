@@ -11,7 +11,7 @@ from typing import List
 
 def arg_parser() -> argparse.Namespace:
     """Parse CLI arguments"""
-    parser = argparse.ArgumentParser(description="Line intersection")
+    parser = argparse.ArgumentParser(description="Horizontal position estimator")
     parser.add_argument(
         "-f",
         "--file_path",

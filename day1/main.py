@@ -12,7 +12,7 @@ def args_parser() -> argparse.Namespace:
     Returns:
         argument parser
     """
-    parser = argparse.ArgumentParser(description="Process input file")
+    parser = argparse.ArgumentParser(description="Number of increments detection")
     parser.add_argument(
         "-f",
         "--file_path",
