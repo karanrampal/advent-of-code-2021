@@ -5,6 +5,7 @@ import argparse
 import logging
 import re
 from pathlib import Path
+from typing import List, Tuple
 
 import numpy as np
 
@@ -69,7 +70,7 @@ def read_file(file_path: Path) -> np.ndarray:
     return np.array(lines)
 
 
-def get_neighbours(data: np.ndarray, i: int, j: int) -> np.ndarray:
+def get_neighbours(data: np.ndarray, i: int, j: int) -> Tuple[List[int], List[int]]:
     """Count the number of low points in the smoke basin
     Args:
         data: Input data
@@ -79,35 +80,90 @@ def get_neighbours(data: np.ndarray, i: int, j: int) -> np.ndarray:
         Sum of the low points
     """
     row, col = data.shape
-    neighbours = []
+    row_list, col_list = [], []
     if i - 1 >= 0:
-        neighbours.append(data[i - 1, j])
+        row_list.append(i - 1)
+        col_list.append(j)
     if i + 1 < row:
-        neighbours.append(data[i + 1, j])
+        row_list.append(i + 1)
+        col_list.append(j)
     if j - 1 >= 0:
-        neighbours.append(data[i, j - 1])
+        row_list.append(i)
+        col_list.append(j - 1)
     if j + 1 < col:
-        neighbours.append(data[i, j + 1])
+        row_list.append(i)
+        col_list.append(j + 1)
 
-    return np.array(neighbours)
+    return row_list, col_list
 
 
-def sum_num_low_points(data: np.ndarray) -> int:
-    """Count the number of low points in the smoke basin
+def get_low_points(data: np.ndarray) -> Tuple[List[int], List[int]]:
+    """Get the number of low points in the smoke basin
     Args:
         data: Input data
     Returns:
-        Sum of the low points
+        The low points
     """
     row, col = data.shape
-    sum_ = 0
+    rows_list, cols_list = [], []
     for i in range(row):
         for j in range(col):
-            neighbours = get_neighbours(data, i, j)
-            if (data[i, j] < neighbours).all():
-                sum_ += data[i, j] + 1
+            r_list, c_list = get_neighbours(data, i, j)
+            if (data[i, j] < data[r_list, c_list]).all():
+                rows_list.append(i)
+                cols_list.append(j)
 
-    return sum_
+    return rows_list, cols_list
+
+
+def sum_num_low_points(data: np.ndarray) -> int:
+    """Sum of risk of the low points
+    Args:
+        data: input data
+    Returns:
+        Sum of the risk scores
+    """
+    row_list, col_list = get_low_points(data)
+    return (data[row_list, col_list]).sum() + len(row_list)
+
+
+def get_basin_sizes(data: np.ndarray) -> List[int]:
+    """Get sizes of the basins
+    Args:
+        data: Input data
+    Returns:
+        Sizes of each basin
+    """
+    visited = np.zeros_like(data)
+    rows_list, cols_list = get_low_points(data)
+    size_list = []
+    for point in zip(rows_list, cols_list):
+        stack = [point]
+        size_ = 0
+        while stack:
+            i, j = stack.pop(0)
+            if not visited[i, j]:
+                visited[i, j] = 1
+                size_ += 1
+            r_list, c_list = get_neighbours(data, i, j)
+            for sub in zip(r_list, c_list):
+                if (data[point] < data[sub] < 9) and not visited[sub]:
+                    stack.append(sub)
+        size_list.append(size_)
+
+    return size_list
+
+
+def prod_basin_sizes(data: np.ndarray) -> int:
+    """Product of biggest 3 basin sizes
+    Args:
+        data: Input data
+    Returns:
+        Product of top 3 basin sizes
+    """
+    size_list = get_basin_sizes(data)
+    tmp = sorted(size_list, reverse=True)[:3]
+    return np.prod(tmp)
 
 
 def main() -> None:
@@ -120,6 +176,9 @@ def main() -> None:
     ans = sum_num_low_points(data)
     assert ans == 570
     print(f"Sum of low points in the basin: {ans}")
+    ans2 = prod_basin_sizes(data)
+    assert ans2 == 899392
+    print(f"Product of 3 largest basins: {ans2}")
 
 
 if __name__ == "__main__":
