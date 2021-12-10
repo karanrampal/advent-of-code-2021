@@ -3,6 +3,7 @@
 
 import argparse
 import logging
+import statistics
 from pathlib import Path
 from typing import List
 
@@ -71,7 +72,7 @@ def matching_brackets(line: str) -> str:
     Args:
         line: Input string line
     Returns:
-        Score of mismatch bracket
+        Mismatch bracket
     """
     stack = []
     for i in line:
@@ -104,6 +105,51 @@ def mismarch_score(data: List[str]) -> int:
     return score
 
 
+def autocomplete_brackets(line: str) -> str:
+    """Find and complete missing matching brackets
+    Args:
+        line: Input string line
+    Returns:
+        All missing brackets
+    """
+    stack = []
+    for i in line:
+        if i in "{(<[":
+            stack.append(i)
+        elif i in "})>]":
+            if stack:
+                if stack[-1] + i in ["{}", "()", "<>", "[]"]:
+                    stack.pop()
+                else:
+                    return "|"
+            else:
+                return "|"
+
+    if stack:
+        return "".join(reversed(stack))
+    return "|"
+
+
+def autocomplete_score(data: List[str]) -> int:
+    """Calculate the autocomplete score
+    Args:
+        data: Input data
+    Returns:
+        Score of missing brackets
+    """
+    score = []
+    dict_ = {"|": 0, "(": 1, "[": 2, "{": 3, "<": 4}
+    for line in data:
+        line_score = 0
+        brackets = autocomplete_brackets(line)
+        for brack in brackets:
+            line_score = line_score * 5 + dict_[brack]
+        if brackets not in "|":
+            score.append(line_score)
+
+    return int(statistics.median(score))
+
+
 def main() -> None:
     """Main function"""
     args = args_parser()
@@ -114,9 +160,9 @@ def main() -> None:
     ans = mismarch_score(lines)
     assert ans == 392043
     print(f"Score: {ans}")
-    # ans2 = submarine_position_new(lines)
-    # assert ans2 == 1698850445
-    # print(f"New submarine position: {ans2}")
+    ans2 = autocomplete_score(lines)
+    assert ans2 == 1605968119
+    print(f"Autocomplete score: {ans2}")
 
 
 if __name__ == "__main__":
