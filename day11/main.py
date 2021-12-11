@@ -124,12 +124,30 @@ def count_flashes(data, num: int = 100) -> int:
     Returns:
         Count of flashes for num steps
     """
+    tmp = data.copy()
     count = 0
     for _ in range(num):
-        cnt, data = octopus_energy_level(data)
+        cnt, tmp = octopus_energy_level(tmp)
         count += cnt
 
     return count
+
+
+def synchronized_flash(data: np.ndarray) -> int:
+    """Get the step when the first synchronized flash happens
+    Args:
+        data: Input data
+    Returns:
+        Step of synchronized flash
+    """
+    tmp = data.copy()
+    i = 0
+    count = 0
+    while count < 100:
+        count, tmp = octopus_energy_level(tmp)
+        i += 1
+
+    return i
 
 
 def main() -> None:
@@ -139,9 +157,14 @@ def main() -> None:
 
     lines = read_file(args.file_path)
 
-    ans = count_flashes(lines)
-    # assert ans == 392043
-    print(f"Score: {ans}")
+    steps = 100
+    ans = count_flashes(lines, steps)
+    assert ans == 1655
+    print(f"Number of flashes after {steps} steps: {ans}")
+
+    ans2 = synchronized_flash(lines)
+    assert ans2 == 337
+    print(f"Step till first synchronized flash: {ans2}")
 
 
 if __name__ == "__main__":
