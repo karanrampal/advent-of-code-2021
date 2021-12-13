@@ -75,13 +75,13 @@ def read_file(file_path: Path) -> Tuple[np.ndarray, List[Tuple[str, int]]]:
     return np.array(points), folds
 
 
-def fold_paper(points: np.ndarray, folds: List[Tuple[str, int]]) -> int:
+def fold_paper(points: np.ndarray, folds: List[Tuple[str, int]]) -> np.ndarray:
     """Fold the paper represented by the points as per the instructions in fold
     Args:
         points: The starting number of dots and their positions
         folds: Folding direction and value
     Returns:
-        Number of dots
+        Paper after folding
     """
     xmax, ymax = points.max(axis=0)
     paper = np.zeros((xmax + 1, ymax + 1))
@@ -108,7 +108,7 @@ def fold_paper(points: np.ndarray, folds: List[Tuple[str, int]]) -> int:
             else:
                 paper = np.pad(mat_up, ((tmp, 0), (0, 0))) + mirror_mat_do
 
-    return (paper > 0).sum()
+    return paper
 
 
 def main() -> None:
@@ -119,8 +119,17 @@ def main() -> None:
     points, folds = read_file(args.file_path)
 
     ans = fold_paper(points, [folds[0]])
-    assert ans == 706
-    print(f"Number of dots after first fold: {ans}")
+    tmp = (ans > 0).sum()
+    assert tmp == 706
+    print(f"Number of dots after first fold: {tmp}")
+
+    ans2 = fold_paper(points, folds)
+    ans2 = (ans2 > 0).astype(int)
+    print(ans2)
+    logging.info(ans2)
+    tmp = (ans2 > 0).sum()
+    assert tmp == 95  # LRFJBJEH
+    print(f"Number of dots after all folds: {tmp}")
 
 
 if __name__ == "__main__":
