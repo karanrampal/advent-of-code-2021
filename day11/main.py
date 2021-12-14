@@ -58,6 +58,8 @@ def read_file(file_path: Path) -> np.ndarray:
     """Read file from file path
     Args:
         file_path: Path of input file
+    Returns:
+        Octopus energy level matrix
     """
     lines = []
     try:

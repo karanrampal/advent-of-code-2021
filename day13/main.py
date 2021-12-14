@@ -58,6 +58,8 @@ def read_file(file_path: Path) -> Tuple[np.ndarray, List[Tuple[str, int]]]:
     """Read file from file path
     Args:
         file_path: Path of input file
+    Returns:
+        Dots and folding operations
     """
     points, folds = [], []
     try:

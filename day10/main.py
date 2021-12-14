@@ -56,6 +56,8 @@ def read_file(file_path: Path) -> List[str]:
     """Read file from file path
     Args:
         file_path: Path of input file
+    Returns:
+        Lines
     """
     lines = []
     try:
