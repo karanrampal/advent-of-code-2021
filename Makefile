@@ -6,6 +6,9 @@ install: requirements.txt
 	$(VENV)/Scripts/pip install --upgrade pip
 	$(VENV)/Scripts/pip install -r requirements.txt
 
+test:
+	pytest -vv --cov
+
 lint:
 	pylint --disable=R -j 6 ./day*/*.py
 
@@ -15,7 +18,10 @@ format:
 	# Run mypy from each subdirectory, i don't know how to use it from parent
 
 clean:
-	rm -rf *.log .coverage .mypy_cache\
-	 ./day*/*.log ./day*/.mypy_cache ./day*/__pycache__
+	rm -rf *.log .coverage .mypy_cache .pytest_cache\
+	 ./day*/*.log ./day*/.mypy_cache ./day*/__pycache__ ./day*/.coverage
 
-.PHONY: lint format clean
+all:
+	install test clean
+
+.PHONY: lint format clean all
