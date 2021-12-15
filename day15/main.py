@@ -92,7 +92,7 @@ def neighbors(
     ]
 
 
-def cost(data: np.ndarray, xpos: int, ypos: int) -> int:
+def entry_risk(data: np.ndarray, xpos: int, ypos: int) -> int:
     """Get the entry cost for a point
     Args:
         data: Input matrix tile
@@ -120,13 +120,12 @@ def dijkstra(data: np.ndarray, scale: int) -> int:
     distances = {(0, 0): 0}
     min_heap = [(0, (0, 0))]
     while min_heap:
-        total, (i, j) = heapq.heappop(min_heap)
-        if total <= distances[(i, j)]:
-            for neigh in neighbors(i, j, height, width, scale):
-                dist = total + cost(data, *neigh)
-                if dist < distances.get(neigh, sys.maxsize):
-                    distances[neigh] = dist
-                    heapq.heappush(min_heap, (dist, neigh))
+        cur_risk, (i, j) = heapq.heappop(min_heap)
+        for neigh in neighbors(i, j, height, width, scale):
+            dist_2_neigh = cur_risk + entry_risk(data, *neigh)
+            if dist_2_neigh < distances.get(neigh, sys.maxsize):
+                distances[neigh] = dist_2_neigh
+                heapq.heappush(min_heap, (dist_2_neigh, neigh))
 
     return distances[(width * scale - 1, height * scale - 1)]
 
