@@ -104,7 +104,7 @@ def cost(data: np.ndarray, xpos: int, ypos: int) -> int:
     height, width = data.shape
     val = data[ypos % height, xpos % width]
     val = val + xpos // width + ypos // height
-    val = 1 + (val - 1) % 9
+    val = (val - 1) % 9 + 1
     return val
 
 
@@ -123,10 +123,10 @@ def dijkstra(data: np.ndarray, scale: int) -> int:
         total, (i, j) = heapq.heappop(min_heap)
         if total <= distances[(i, j)]:
             for neigh in neighbors(i, j, height, width, scale):
-                distance = total + cost(data, *neigh)
-                if distance < distances.get(neigh, sys.maxsize):
-                    distances[neigh] = distance
-                    heapq.heappush(min_heap, (distance, neigh))
+                dist = total + cost(data, *neigh)
+                if dist < distances.get(neigh, sys.maxsize):
+                    distances[neigh] = dist
+                    heapq.heappush(min_heap, (dist, neigh))
 
     return distances[(width * scale - 1, height * scale - 1)]
 
