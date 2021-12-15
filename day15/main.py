@@ -74,21 +74,21 @@ def read_file(file_path: Path) -> np.ndarray:
 
 
 def neighbors(
-    xpos: int, ypos: int, height: int, width: int, scale: int
+    xpos: int, ypos: int, height: int, width: int, rep: int
 ) -> List[Tuple[int, int]]:
-    """Get neighbours of the matrix given the expansion scale
+    """Get neighbours of a point given the repetition number
     Args:
         xpos: X position of point
-        j: Column position of point
+        ypos: Column position of point
         height: Height of the 2D matrix
         width: Width of the 2D matrix
-        scale: Expansion scale for the matrix
+        rep: Num repetition for the matrix
     Returns:
         List of neighbour positions
     """
     out = [(xpos - 1, ypos), (xpos + 1, ypos), (xpos, ypos - 1), (xpos, ypos + 1)]
     return [
-        (i, j) for i, j in out if 0 <= i < (width * scale) and 0 <= j < (height * scale)
+        (i, j) for i, j in out if 0 <= i < (width * rep) and 0 <= j < (height * rep)
     ]
 
 
@@ -108,11 +108,11 @@ def entry_risk(data: np.ndarray, xpos: int, ypos: int) -> int:
     return val
 
 
-def dijkstra(data: np.ndarray, scale: int) -> int:
+def dijkstra(data: np.ndarray, rep: int) -> int:
     """Dijkstra's algorithm to find the min cost of traversing the graph
     Args:
         data: Input 2D matrix tile
-        scale: Expand the tile in both directions
+        rep: Number of repetitions of the tile in both directions
     Returns:
         Min cost
     """
@@ -121,13 +121,13 @@ def dijkstra(data: np.ndarray, scale: int) -> int:
     min_heap = [(0, (0, 0))]
     while min_heap:
         cur_risk, (i, j) = heapq.heappop(min_heap)
-        for neigh in neighbors(i, j, height, width, scale):
+        for neigh in neighbors(i, j, height, width, rep):
             dist_2_neigh = cur_risk + entry_risk(data, *neigh)
             if dist_2_neigh < distances.get(neigh, sys.maxsize):
                 distances[neigh] = dist_2_neigh
                 heapq.heappush(min_heap, (dist_2_neigh, neigh))
 
-    return distances[(width * scale - 1, height * scale - 1)]
+    return distances[(width * rep - 1, height * rep - 1)]
 
 
 def main() -> None:
