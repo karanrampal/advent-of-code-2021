@@ -141,7 +141,10 @@ def main() -> None:
     output, ans = run(data, (1, 500), (-500, 500))
     assert ans == 5886
     print(f"Max height reached: {ans}")
-    print(f"All valid velocities: {len(output)}")
+
+    ans2 = len(output)
+    assert ans2 == 1806
+    print(f"All valid velocities: {ans2}")
 
 
 if __name__ == "__main__":
