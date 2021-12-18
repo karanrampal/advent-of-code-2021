@@ -5,7 +5,7 @@ import argparse
 import logging
 import re
 from pathlib import Path
-from typing import Tuple
+from typing import List, Tuple
 
 
 def args_parser() -> argparse.Namespace:
@@ -87,6 +87,7 @@ def simulate(
     """
     vel_x, vel_y = velocity
     xmin, xmax, ymin, ymax = target
+
     xpos, ypos = 0, 0
     step = 1000
     max_ht = 0
@@ -99,7 +100,7 @@ def simulate(
         if (xmin <= xpos <= xmax) and (ymin <= ypos <= ymax):
             reached = True
             break
-        if (xpos > xmax) or (ypos < ymax):
+        if (xpos > xmax) or (ypos < ymin):
             break
         vel_x -= 1 if vel_x > 0 else -1 if vel_x < 0 else 0
         vel_y -= 1
@@ -107,24 +108,27 @@ def simulate(
     return reached, max_ht
 
 
-def run(xmin: int, xmax: int, ymin: int, ymax: int) -> int:
+def run(
+    target: Tuple[int, int, int, int], xrange: Tuple[int, int], yrange: Tuple[int, int]
+) -> Tuple[List[Tuple[int, int]], int]:
     """Run the sumulation
     Args:
-        xmin: Min x position of target area
-        xmax: Max x position of target area
-        ymin: Min y position of target area
-        ymax: Max y position of target area
+        target: Min/Max x, y position of target area
     Returns:
         Max value of y height possible
     """
-    out = 0
-    for x_init in range(1, 120):
-        for y_init in range(1, 150):
+    xmin, xmax, ymin, ymax = target
+
+    out = []
+    max_height = 0
+    for x_init in range(*xrange):
+        for y_init in range(*yrange):
             reached, max_ht = simulate((x_init, y_init), (xmin, xmax, ymin, ymax))
             if reached:
-                out = max(out, max_ht)
+                out.append((x_init, y_init))
+                max_height = max(max_height, max_ht)
 
-    return out
+    return out, max_height
 
 
 def main() -> None:
@@ -132,10 +136,12 @@ def main() -> None:
     args = args_parser()
     setup_logger(args.log_path)
 
-    xmin, xmax, ymin, ymax = read_file(args.file_path)
-    ans = run(xmin, xmax, ymin, ymax)
+    data = read_file(args.file_path)
+
+    output, ans = run(data, (1, 500), (-500, 500))
     assert ans == 5886
     print(f"Max height reached: {ans}")
+    print(f"All valid velocities: {len(output)}")
 
 
 if __name__ == "__main__":
