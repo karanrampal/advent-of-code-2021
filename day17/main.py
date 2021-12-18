@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Submarine position"""
+"""Probe trajectory"""
 
 import argparse
 import logging
@@ -13,7 +13,7 @@ def args_parser() -> argparse.Namespace:
     Returns:
         argument parser
     """
-    parser = argparse.ArgumentParser(description="Calculate submarine position")
+    parser = argparse.ArgumentParser(description="Probe trajectory")
     parser.add_argument(
         "-f",
         "--file_path",
